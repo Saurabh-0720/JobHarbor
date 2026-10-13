@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>JobHarbor</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f5f5f7;
+        --card: #fff;
+        --tx: #1d1d1f;
+        --mut: #6e6e73;
+        --line: rgba(0, 0, 0, 0.09);
+        --fill: rgba(0, 0, 0, 0.05);
+        --blue: #007aff;
+        --green: #34c759;
+        --red: #ff3b30;
+        --orange: #ff9500;
+        --purple: #af52de;
+        --bar: rgba(245, 245, 247, 0.72);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #000;
+          --card: #1c1c1e;
+          --tx: #f5f5f7;
+          --mut: #98989d;
+          --line: rgba(255, 255, 255, 0.1);
+          --fill: rgba(255, 255, 255, 0.08);
+          --blue: #0a84ff;
+          --green: #30d158;
+          --red: #ff453a;
+          --orange: #ff9f0a;
+          --purple: #bf5af2;
+          --bar: rgba(0, 0, 0, 0.7);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--tx);
+        font:
+          14px/1.45 -apple-system,
+          BlinkMacSystemFont,
+          "SF Pro Text",
+          "Inter",
+          system-ui,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 28px;
+        background: var(--bar);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border-bottom: 1px solid var(--line);
+      }
+      h1 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+      .sub {
+        color: var(--mut);
+        font-size: 12px;
+      }
+      .sp {
+        flex: 1;
+      }
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px;
+        display: grid;
+        gap: 20px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 18px 20px;
+      }
+      .card.fl {
+        display: flex;
+        flex-direction: column;
+      }
+      .cw {
+        flex: 1;
+        min-height: 190px;
+        position: relative;
+      }
+      label.sw {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--mut);
+        font-size: 12px;
+        margin: 0;
+        cursor: pointer;
+      }
+      label.sw input {
+        width: auto;
+        accent-color: var(--blue);
+      }
+      h2 {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0 0 14px;
+        color: var(--mut);
+      }
+      .num {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+      }
+      button,
+      select,
+      input,
+      textarea {
+        font: inherit;
+        color: var(--tx);
+      }
+      .btn {
+        background: color-mix(in srgb, var(--blue) 13%, transparent);
+        color: var(--blue);
+        border: 0;
+        border-radius: 8px;
+        padding: 6px 13px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background: color-mix(in srgb, var(--blue) 20%, transparent);
+      }
+      .btn.fill {
+        background: var(--blue);
+        color: #fff;
+      }
+      .btn.fill:hover {
+        opacity: 0.88;
+      }
+      .btn.red {
+        background: color-mix(in srgb, var(--red) 13%, transparent);
+        color: var(--red);
+      }
+      :focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+      input,
+      select,
+      textarea {
+        background: var(--fill);
+        border: 0;
+        border-radius: 8px;
+        padding: 7px 11px;
+        width: 100%;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1px;
+        background: var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .stats > div {
+        background: var(--card);
+        padding: 16px 18px;
+      }
+      .stats .v {
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .stats .k {
+        color: var(--mut);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+      .three {
+        display: flex;
+        gap: 22px;
+        margin-top: 10px;
+      }
+      .big {
+        font-size: 38px;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+      .small {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .cap {
+        color: var(--mut);
+        font-size: 12px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 20px;
+      }
+      @media (max-width: 860px) {
+        .grid,
+        .two {
+          grid-template-columns: 1fr;
+        }
+        main {
+          padding: 16px;
+        }
+        header {
+          padding: 12px 16px;
+          flex-wrap: wrap;
+        }
+      }
+      canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .lg {
+        display: flex;
+        gap: 14px;
+        color: var(--mut);
+        font-size: 12px;
+      }
+      .lg i,
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+      }
+      .node {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .node b {
+        font-weight: 500;
+      }
+      .feed {
+        max-height: 230px;
+        overflow: auto;
+        margin-top: 6px;
+      }
+      .feed div {
+        display: flex;
+        gap: 8px;
+        padding: 5px 0;
+        font-size: 12px;
+        border-bottom: 1px solid var(--line);
+      }
+      .feed time {
+        color: var(--mut);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      .bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .seg {
+        display: inline-flex;
+        background: var(--fill);
+        border-radius: 9px;
+        padding: 2px;
+      }
+      .seg button {
+        border: 0;
+        background: none;
+        padding: 4px 12px;
+        border-radius: 7px;
+        cursor: pointer;
+        color: var(--mut);
+        font-weight: 500;
+      }
+      .seg button.on {
+        background: var(--card);
+        color: var(--tx);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+      .tw {
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        text-align: left;
+        color: var(--mut);
+        font-weight: 500;
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+      td {
+        padding: 10px;
+        border-top: 1px solid var(--line);
+      }
+      tr.j {
+        cursor: pointer;
+      }
+      tr.j:hover td {
+        background: var(--fill);
+      }
+      .mono {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 12px;
+      }
+      .cut {
+        max-width: 320px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--mut);
+      }
+      .cut.e {
+        color: var(--red);
+      }
+      dialog {
+        background: var(--card);
+        color: var(--tx);
+        border: 0;
+        border-radius: 16px;
+        width: min(560px, 92vw);
+        padding: 22px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(6px);
+      }
+      label {
+        display: block;
+        color: var(--mut);
+        font-size: 12px;
+        margin: 12px 0 4px;
+      }
+      pre {
+        background: var(--fill);
+        border-radius: 10px;
+        padding: 12px;
+        overflow: auto;
+        max-height: 220px;
+        font-size: 12px;
+        margin: 0;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .row > * {
+        flex: 1;
+      }
+      .act {
+        display: flex;
+        gap: 8px;
+        margin-top: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>JobHarbor</h1>
+      <span class="sub" id="meta"></span>
+      <div class="sp"></div>
+      <input
+        id="key"
+        type="password"
+        placeholder="API key"
+        style="width: 140px"
+        hidden
+      />
+      <label
+        class="sw"
+        title="Include jobs that fail on purpose to exercise retries and the dead-letter queue"
+        ><input type="checkbox" id="fail" checked />Inject failures</label
+      ><button class="btn" onclick="demo(50)">Add demo jobs</button
+      ><button class="btn" onclick="demo(400, 20)">Load test</button
+      ><button class="btn red" onclick="reset()">Reset</button
+      ><button class="btn fill" onclick="enq.showModal()">New job</button>
+    </header>
+    <main>
+      <div class="stats" id="stats"></div>
+      <div class="card">
+        <h2>Latency</h2>
+        <div class="two" id="lat"></div>
+      </div>
+      <div class="grid">
+        <div class="card fl">
+          <div class="bar" style="margin-bottom: 6px">
+            <h2 style="margin: 0">Throughput · jobs per second</h2>
+            <div class="sp"></div>
+            <div class="lg">
+              <span><i style="background: var(--green)"></i>Succeeded</span
+              ><span><i style="background: var(--red)"></i>Failed</span
+              ><span><i style="background: var(--mut)"></i>Enqueued</span>
+            </div>
+          </div>
+          <div class="cw"><canvas id="ch"></canvas></div>
+        </div>
+        <div class="card">
+          <h2>Workers</h2>
+          <div id="nodes"></div>
+          <h2 style="margin-top: 18px">Activity</h2>
+          <div class="feed" id="ev"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="bar">
+          <h2 style="margin: 0">Jobs</h2>
+          <div class="sp"></div>
+          <div class="seg" id="seg"></div>
+          <select id="ft" style="width: auto" onchange="loadJobs()">
+            <option value="">All types</option>
+          </select>
+          <input
+            id="fq"
+            type="search"
+            placeholder="Search"
+            style="width: 170px"
+            oninput="loadJobs()"
+          /><button
+            class="btn"
+            onclick="api('POST', '/api/dead/retry').then(refresh)"
+          >
+            Retry dead
+          </button>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Tries</th>
+                <th>Result</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="jobs"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <dialog id="enq">
+      <h2>New job</h2>
+      <label>Type</label
+      ><select id="et" onchange="tpl()"></select
+      ><label>Payload (JSON)</label
+      ><textarea id="ep" rows="4" class="mono"></textarea>
+      <div class="row">
+        <div>
+          <label>Priority</label
+          ><select id="epr">
+            <option>normal</option>
+            <option>high</option>
+            <option>low</option>
+          </select>
+        </div>
+        <div>
+          <label>Max retries</label><input id="er" type="number" value="3" />
+        </div>
+        <div>
+          <label>Delay (s)</label><input id="ed" type="number" value="0" />
+        </div>
+      </div>
+      <label>Idempotency key</label><input id="ek" placeholder="Optional" />
+      <div class="act">
+        <div class="sp"></div>
+        <button class="btn" onclick="enq.close()">Cancel</button
+        ><button class="btn fill" onclick="submitJob()">Enqueue</button>
+      </div>
+    </dialog>
+    <dialog id="det">
+      <div id="dbody"></div>
+      <div class="act">
+        <button class="btn" id="dr">Retry</button
+        ><button class="btn red" id="dc">Cancel job</button>
+        <div class="sp"></div>
+        <button class="btn" onclick="det.close()">Done</button>
+      </div>
+    </dialog>
+    <script>
+      const $ = (id) => document.getElementById(id),
+        T = {
+          send_email: { to: "user@example.com" },
+          resize_image: { width: 800, height: 600 },
+          generate_pdf: { title: "Invoice #1042" },
+          webhook: {
+            url: "https://httpbin.org/post",
+            body: { hello: "world" },
+          },
+          flaky: { fail_rate: 0.6 },
+          sleep: { seconds: 3 },
+        };
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const P = ["Low", "Normal", "High"],
+        COL = {
+          queued: "blue",
+          scheduled: "blue",
+          running: "purple",
+          retrying: "orange",
+          succeeded: "green",
+          dead: "red",
+          cancelled: "mut",
+        };
+      const SEG = [
+        ["all", "All"],
+        ["queued", "Queued"],
+        ["running", "Running"],
+        ["retrying", "Retrying"],
+        ["succeeded", "Done"],
+        ["dead", "Dead"],
+      ];
+      let st = "all";
+      const ago = (t) => {
+        const s = Math.max(0, ((Date.now() - new Date(t)) / 1e3) | 0);
+        return s < 60
+          ? s + "s ago"
+          : s < 3600
+            ? ((s / 60) | 0) + "m ago"
+            : ((s / 3600) | 0) + "h ago";
+      };
+      const fm = (ms) =>
+        ms < 1000
+          ? ms + " ms"
+          : ms < 10000
+            ? (ms / 1e3).toFixed(2) + " s"
+            : ms < 60000
+              ? (ms / 1e3).toFixed(1) + " s"
+              : ((ms / 6e4) | 0) + "m " + Math.round((ms % 6e4) / 1e3) + "s";
+      const dot = (c) =>
+        `<span class="dot" style="background:var(--${c})"></span>`;
+      async function api(m, u, b) {
+        const h = { "Content-Type": "application/json" };
+        if ($("key").value) h["X-API-Key"] = $("key").value;
+        const r = await fetch(u, {
+          method: m,
+          headers: h,
+          body: b ? JSON.stringify(b) : undefined,
+        });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          alert(j.error || r.statusText);
+          throw 0;
+        }
+        return j;
+      }
+      const demo = (n, sp) =>
+          api("POST", "/api/demo", {
+            count: n,
+            spread_seconds: sp || 0,
+            clean: !$("fail").checked,
+          }).then(refresh),
+        reset = () =>
+          confirm("Delete all jobs?") &&
+          api("POST", "/api/reset").then(refresh);
+      function tpl() {
+        $("ep").value = JSON.stringify(T[$("et").value] || {}, null, 1);
+      }
+      async function submitJob() {
+        let p;
+        try {
+          p = JSON.parse($("ep").value || "{}");
+        } catch (e) {
+          return alert("Payload is not valid JSON");
+        }
+        await api("POST", "/api/jobs", {
+          type: $("et").value,
+          payload: p,
+          priority: $("epr").value,
+          max_retries: +$("er").value,
+          delay_seconds: +$("ed").value,
+          idempotency_key: $("ek").value,
+        });
+        enq.close();
+        refresh();
+      }
+      $("seg").innerHTML = SEG.map(
+        ([v, l]) =>
+          `<button data-v="${v}" class="${v == "all" ? "on" : ""}">${l}</button>`,
+      ).join("");
+      $("seg").onclick = (e) => {
+        const v = e.target.dataset.v;
+        if (!v) return;
+        st = v;
+        [...$("seg").children].forEach((b) =>
+          b.classList.toggle("on", b.dataset.v == v),
+        );
+        loadJobs();
+      };
+      function chart(h) {
+        const c = $("ch"),
+          d = devicePixelRatio || 1,
+          w = c.clientWidth,
+          H = c.clientHeight;
+        c.width = w * d;
+        c.height = H * d;
+        const x = c.getContext("2d");
+        x.scale(d, d);
+        x.clearRect(0, 0, w, H);
+        const cs = getComputedStyle(document.documentElement),
+          col = (n) => cs.getPropertyValue(n).trim();
+        const sm = (k) =>
+          h.map((_, i) => {
+            const a = h.slice(Math.max(0, i - 2), i + 1);
+            return a.reduce((s, v) => s + v[k], 0) / a.length;
+          });
+        const ok = sm("ok"),
+          fl = sm("fail"),
+          en = sm("enq"),
+          mx = Math.max(2, ...ok, ...fl) * 1.2,
+          L = 26,
+          B = 6,
+          T = 8;
+        const X = (i) => L + ((w - L - 2) * i) / Math.max(1, h.length - 1),
+          Y = (v) => Math.max(T, H - B - ((H - B - T) * v) / mx);
+        x.font = "11px -apple-system,system-ui";
+        x.fillStyle = col("--mut");
+        x.strokeStyle = col("--line");
+        x.lineWidth = 1;
+        for (let i = 0; i <= 3; i++) {
+          const y = T + ((H - B - T) * i) / 3;
+          x.beginPath();
+          x.moveTo(L, y);
+          x.lineTo(w, y);
+          x.stroke();
+          x.fillText(((mx * (3 - i)) / 3).toFixed(mx < 6 ? 1 : 0), 0, y + 4);
+        }
+        const line = (a, color, wd, dash, fill) => {
+          if (!a.length) return;
+          x.beginPath();
+          a.forEach((v, i) =>
+            i ? x.lineTo(X(i), Y(v)) : x.moveTo(X(i), Y(v)),
+          );
+          x.lineJoin = "round";
+          x.lineWidth = wd;
+          x.strokeStyle = color;
+          x.setLineDash(dash);
+          x.stroke();
+          x.setLineDash([]);
+          if (fill) {
+            x.lineTo(X(a.length - 1), H - B);
+            x.lineTo(X(0), H - B);
+            x.closePath();
+            const g = x.createLinearGradient(0, T, 0, H - B);
+            g.addColorStop(0, color + "38");
+            g.addColorStop(1, color + "00");
+            x.fillStyle = g;
+            x.fill();
+          }
+        };
+        line(en, col("--mut"), 1, [3, 4]);
+        line(fl, col("--red"), 1.5, []);
+        line(ok, col("--green"), 2, [], true);
+      }
+      async function refresh() {
+        try {
+          const s = await (await fetch("/api/stats")).json(),
+            d = s.depths,
+            c = s.counters,
+            done = c.succeeded + c.dead,
+            L = s.latency,
+            W = s.nodes.reduce((a, n) => a + n.concurrency, 0);
+          $("key").hidden = !s.auth_required;
+          $("meta").textContent =
+            (s.redis.startsWith("embedded") ? "Embedded Redis" : "Redis") +
+            " · up " +
+            fm(s.uptime_sec * 1e3);
+          $("stats").innerHTML = [
+            ["Waiting", d.ready],
+            ["Scheduled", d.delayed],
+            ["Running", d.running],
+            ["Succeeded", c.succeeded],
+            ["Retried", c.retried],
+            ["Dead-letter", d.dead, d.dead ? "red" : ""],
+            [
+              "Success rate",
+              done ? Math.round((100 * c.succeeded) / done) + "%" : "–",
+            ],
+          ]
+            .map(
+              ([k, v, cl]) =>
+                `<div><div class="v num" ${cl ? `style="color:var(--${cl})"` : ""}>${v}</div><div class="k">${k}</div></div>`,
+            )
+            .join("");
+          const blk = (
+            t,
+            o,
+            note,
+          ) => `<div><div class="cap">${t}</div><div class="big num">${o.count ? fm(o.p50) : "–"} <span class="cap" style="font-size:13px;font-weight:400">median</span></div>
+  <div class="three"><div><div class="small num">${o.count ? fm(o.p90) : "–"}</div><div class="cap">p90</div></div><div><div class="small num">${o.count ? fm(o.p99) : "–"}</div><div class="cap">p99</div></div><div><div class="small num">${o.count ? fm(o.max) : "–"}</div><div class="cap">max</div></div></div><div class="cap" style="margin-top:10px">${note}</div></div>`;
+          $("lat").innerHTML =
+            blk(
+              "Queue wait",
+              L.wait,
+              `${d.ready} waiting · ${W} worker${W == 1 ? "" : "s"} online · last ${L.wait.count} jobs`,
+            ) +
+            blk(
+              "Run time",
+              L.run,
+              `Handler execution · last ${L.run.count} successes`,
+            );
+          chart(s.history || []);
+          $("nodes").innerHTML = s.nodes.length
+            ? s.nodes
+                .map(
+                  (n) =>
+                    `<div class="node"><b class="mono">${esc(n.id)}</b><div class="cap">${n.inflight} of ${n.concurrency} busy · ${n.processed} done · ${n.failed} failed</div></div>`,
+                )
+                .join("")
+            : '<div class="cap">No workers online</div>';
+          if (!$("et").options.length) {
+            $("et").innerHTML = s.types
+              .map((t) => `<option>${t}</option>`)
+              .join("");
+            $("ft").innerHTML += s.types
+              .map((t) => `<option>${t}</option>`)
+              .join("");
+            tpl();
+          }
+          const e = await (await fetch("/api/events")).json(),
+            lv = { ok: "green", warn: "orange", error: "red", info: "mut" };
+          $("ev").innerHTML = e.events
+            .map(
+              (v) =>
+                `<div><time>${new Date(v.t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" })}</time><span>${dot(lv[v.level] || "mut")}${esc(v.msg)}</span></div>`,
+            )
+            .join("");
+          loadJobs();
+        } catch (e) {}
+      }
+      async function loadJobs() {
+        const j =
+          (
+            await (
+              await fetch(
+                `/api/jobs?limit=100&status=${st}&type=${$("ft").value}&q=${encodeURIComponent($("fq").value)}`,
+              )
+            ).json()
+          ).jobs || [];
+        $("jobs").innerHTML =
+          j
+            .map(
+              (x) =>
+                `<tr class="j" onclick="show('${x.id}')"><td class="mono">${x.id}</td><td>${esc(x.type)}</td><td>${dot(COL[x.status])}${x.status}</td><td class="cap">${P[x.priority]}</td><td class="num">${x.attempts}/${x.max_retries + 1}</td><td class="cut ${x.error ? "e" : ""}">${esc(x.error || x.result || "")}</td><td class="cap">${ago(x.created_at)}</td></tr>`,
+            )
+            .join("") ||
+          '<tr><td colspan="7" class="cap" style="padding:28px;text-align:center">No jobs here yet. Choose “Add demo jobs” to get started.</td></tr>';
+      }
+      async function show(id) {
+        const j = await (await fetch("/api/jobs/" + id)).json();
+        $("dbody").innerHTML =
+          `<h2 style="font-size:17px;color:var(--tx);margin-bottom:4px">${esc(j.type)} <span class="cap mono">${j.id}</span></h2><div style="margin-bottom:14px">${dot(COL[j.status])}${j.status}</div>
+ <pre>${esc(JSON.stringify({ payload: j.payload, priority: P[j.priority], max_retries: j.max_retries, result: j.result, error: j.error, idempotency_key: j.idempotency_key, duration_ms: j.duration_ms }, null, 1))}</pre>
+ <h2 style="margin:16px 0 4px">Attempts</h2><table>${(j.history || []).map((a) => `<tr><td class="num">#${a.n}</td><td class="mono">${esc(a.worker || "")}</td><td class="num">${a.ended_at ? fm(new Date(a.ended_at) - new Date(a.started_at)) : "running"}</td><td class="cut e">${esc(a.error || "")}</td></tr>`).join("")}</table>`;
+        $("dr").onclick = () =>
+          api("POST", `/api/jobs/${id}/retry`).then(() => {
+            det.close();
+            refresh();
+          });
+        $("dc").onclick = () =>
+          api("DELETE", "/api/jobs/" + id).then(() => {
+            det.close();
+            refresh();
+          });
+        det.showModal();
+      }
+      refresh();
+      setInterval(refresh, 1000);
+    </script>
+  </body>
+</html>

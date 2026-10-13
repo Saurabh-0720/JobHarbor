@@ -1,0 +1,19 @@
+# Distributed demo: 1 API + dashboard, 2 worker nodes, shared Redis.
+# Scale workers live:  docker compose up --scale worker=5
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: [redisdata:/data]
+  api:
+    build: .
+    environment: {JH_MODE: api, JH_REDIS: "redis:6379"}
+    ports: ["8080:8080"]
+    depends_on: [redis]
+  worker:
+    build: .
+    environment: {JH_MODE: worker, JH_REDIS: "redis:6379", JH_WORKERS: "4"}
+    depends_on: [redis]
+    deploy: {replicas: 2}
+volumes:
+  redisdata:
